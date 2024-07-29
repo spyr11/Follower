@@ -1,35 +1,21 @@
 ﻿using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class Enemy : Character
 {
-    [SerializeField] private Rigidbody _rigidbody;
     [SerializeField] private Transform _target;
-    [SerializeField] private float _movementSpeed;
 
     private float _distanceToStop = 2f;
 
-    private void FixedUpdate()
+    protected override Vector3 GetDirection()
     {
         Vector3 direction = _target.position - transform.position;
+        transform.rotation = Quaternion.LookRotation(direction);
 
-        Move(direction);
-    }
-
-    private void Move(Vector3 direction)
-    {
-        if (Vector3.SqrMagnitude(direction) < _distanceToStop * _distanceToStop)
+        if (Vector3.SqrMagnitude(direction) < (_distanceToStop * _distanceToStop))
         {
-            _rigidbody.velocity = Vector3.zero;
-
-            return;
+            return Vector3.zero;
         }
 
-        _rigidbody.rotation = Quaternion.LookRotation(direction);
-
-        Vector3 newPosition = transform.forward * _movementSpeed;
-
-        newPosition.y = _rigidbody.velocity.y;
-
-        _rigidbody.velocity = newPosition;
+        return transform.forward;
     }
 }
